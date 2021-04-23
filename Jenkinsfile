@@ -19,17 +19,19 @@ pipeline {
             steps {
                 echo "Checkout Git Repo"
             // git credentialsId: 'github', url: 'https://github.com/radhakrishna4687/:${GITHUB_BRANCH}'
-                git 'https://github.com/radhakrishna4687/java-webapp.git'
-                echo "Complted the Checkout the Git"
+                git 'https://github.com/radhakrishna4687/docker-k8s-web-app.git'
+                echo "Completed the Checkout the Git"
                 sh "pwd"
             }
         }
-        stage ( 'Maven Build WAR file ' ) {
+        stage ('Maven Build WAR file') {
             steps {
                 sh '''
                     mvn -f /var/lib/jenkins/workspace/artifacts-upload-s3-pipeline/pom.xml clean package
+         
                 '''
                 //cp /var/lib/jenkins/workspace/artifacts-upload-s3-pipeline/target/*.war /home/ec2-user/
+                echo "Sucessfully Compile Java code and generated WAR file"
             }
         }
         stage ('Upload Artifacts toAWS S3 Bucket') {
@@ -39,7 +41,7 @@ pipeline {
                         aws s3 mb s3://test-env-webaps
                         aws s3 cp  /var/lib/jenkins/workspace/artifacts-upload-s3-pipeline/target/*.war s3://test-env-webaps
                     '''
-                    sh "echo sucessfully upload the artifacyts to S3 buckets"
+                    echo "Sucessfully upload the artifacyts to S3 buckets"
             }
         }
         stage ('Build Docker Image') {
@@ -48,6 +50,7 @@ pipeline {
                     docker build . -t ${DOCKER_IMAGE} 
                     docker images
                 ''' 
+                echo "Sucessfully Build the Docker Image"
                 //sh "docker build .  -t radhakrishna4687/test-image-1:${DOCKER_TAG} "
             }
         }
@@ -57,6 +60,7 @@ pipeline {
                     docker run -itd --name=${CONTAINER_NAME} -p 8091:8080 ${DOCKER_IMAGE}
                     docker ps 
                 '''    
+                echo "sucessfully run the Docker Container"
             }
         }
         stage ('Docker image push to Dockerhub Repository') {
@@ -71,6 +75,7 @@ pipeline {
                     aws secretsmanager list-secrets
                 '''    
                 echo 'Sucessfully fetch the AWS secret Key'
+                echo "Sucessfully Build the Docker Image"
             }
         }
         stage ('Push docker image to DockerHub') {
@@ -89,6 +94,7 @@ pipeline {
                    // sh 'docker login --username radhakrishna4687  --password-stdin ${dockerhubpwd}'
                         //sh 'docker push radhakrishna4687/harikrishna-web-app:v3'
                     sh 'docker push radhakrishna4687/test-java-web-app:0.2'
+                    echo "Sucessfully Push the  Docker Image to Docker Private Repo"
                 }
             }
         }
