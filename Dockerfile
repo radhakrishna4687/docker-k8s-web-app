@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:groovy-20210614
 ENV TOMCAT_VERSION=8.5.50
 
 
