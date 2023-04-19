@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:kinetic
 ENV TOMCAT_VERSION=8.5.50
 
 
