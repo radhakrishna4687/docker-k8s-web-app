@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:24.10
 ENV TOMCAT_VERSION=8.5.50
 
 
